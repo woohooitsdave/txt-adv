@@ -1,0 +1,15 @@
+using System;
+using System.Collections.Generic;
+
+namespace TextAdventure
+{
+    public class CommandController
+    {
+        Dictionary<string, int> AllCommands = new Dictionary<string, int>();
+        public CommandController(){
+            
+            AllCommands.Add("a", 1);
+        
+        }
+    }
+}
