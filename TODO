@@ -1,0 +1,22 @@
+Fix movement
+Items - a/an/the
+Load synonyms for commands from file
+Wear/Equip item
+Last door used (for backing out of dark cells)
+Box inventories (chests, items not simply on floor, etc)
+Store/Put item (in box)
+Dynamic descriptions
+Door/Key/Lock system
+Mechanisms (levers for doors, etc)
+Time system
+Weather system
+Abilities/unlockable commands
+Files/Books
+Achievements/Statistics
+Re-join inputs after 1st command found (2, 3, 4 etc become index 2) to allow multi word descriptions (blue book, etc)
+
+///Refactoring
+Split into cs files
+Words from game into lang file
+Custom Exceptions
+Catch failed add item to inventory ids
