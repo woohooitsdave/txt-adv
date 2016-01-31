@@ -1,0 +1,37 @@
+Full Changelog
+==============
+
+0.0.0.6a
+--------
+- Major refactoring, now using Dictionary<key, value> for all lists
+- GitHub now in use
+
+0.0.0.5a
+--------
+- Take item from room, adds to backpack
+- Drop item to room, removes from backpack
+- Added NW, NE, SE, SW, Up & Down inputs
+
+0.0.0.4a
+--------
+* introduced Utilities class Vector
+- Directions array to clean Inputs code
+- Basic cell inventory changed to "floor"
+- Words from Class to Struct
+- Replace arrays with Vector utility class
+
+
+0.0.0.3a
+--------
+Basic cell inventories, cell content description
+
+
+0.0.0.2a
+--------
+Display class, cleaned up code, cell descriptions on entry/examine
+
+
+0.0.0.1a
+--------
+world loader, basic commands, navigation, cells, doors, player inventories
+
