@@ -4,6 +4,7 @@ Full Changelog
 0.0.0.6a
 --------
 - Major refactoring, now using Dictionary<key, value> for all lists
+- Display class moved to new GameUtils.cs file, isolated as stand-alone class
 - GitHub now in use
 
 0.0.0.5a
