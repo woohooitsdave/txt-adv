@@ -3,13 +3,66 @@ using System.Collections.Generic;
 
 namespace TextAdventure
 {
-    public class CommandController
+    public class InputController
     {
-        Dictionary<string, int> AllCommands = new Dictionary<string, int>();
-        public CommandController(){
-            
-            AllCommands.Add("a", 1);
+        Dictionary<string, string> Go = new Dictionary<string, string>();
+        Dictionary<string, string> Do = new Dictionary<string, string>();
+        Dictionary<string, string> Prepos = new Dictionary<string, string>();
+        Dictionary<string, string> Control = new Dictionary<string, string>();
         
+        public InputController(){
+            
+            //Nouns
+            Go.Add("north", "go_north");
+            Go.Add("south", "go_south");
+            Go.Add("east", "go_east");
+            Go.Add("west", "go_west");
+            Go.Add("up", "go_up");
+            Go.Add("down", "go_down");
+            
+            //Verbs
+            Do.Add("look", "do_look");
+            Do.Add("examine", "do_look");
+            Do.Add("take", "do_take");
+            Do.Add("drop", "do_drop");
+            
+            //Prepositions            
+            Prepos.Add("at", "prep_at");           
+            Prepos.Add("go", "prep_go");           
+            Prepos.Add("in", "prep_in");
+            
+            //Options, config etc
+            Control.Add("quit", "cmd_exit");
+            Control.Add("inv", "cmd_inv");
+            Control.Add("help", "cmd_help");
+            Control.Add("y", "cmd_yes");
+            Control.Add("yes", "cmd_yes");
+            Control.Add("n", "cmd_no");
+            Control.Add("no", "cmd_no");
+            Control.Add("", "cmd_null");
+            
         }
+                
+        public Input ParseInput(string input){
+            string[] inpArr = input.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+            Input parsed = new Input();
+            
+            //remove bulk words, at in etc
+            for(int i = 0; i < inpArr.Length; i++)
+                if(Prepos.ContainsKey(inpArr[i])) inpArr[i] = "";
+            
+            inpArr = (string.Join(" ", inpArr)).Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string s in inpArr)
+            {
+                if(Control.ContainsKey(s)){ parsed = new Input(Control[s], ""); break; }
+            }
+            return parsed;
+        }
+    }    
+    
+    public struct Input {
+        public string cmd, targ;
+        
+        public Input(string c, string t) { cmd = c; targ = t; }
     }
 }
