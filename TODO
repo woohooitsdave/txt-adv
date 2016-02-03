@@ -1,7 +1,6 @@
 Items - a/an/the
 Load synonyms for commands from file
 Wear/Equip item
-Last door used (for backing out of dark cells)
 Box inventories (chests, items not simply on floor, etc)
 Store/Put item (in box)
 Dynamic descriptions
