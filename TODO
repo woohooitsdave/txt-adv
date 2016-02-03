@@ -20,3 +20,6 @@ Split into cs files
 Words from game into lang file
 Custom Exceptions
 Catch failed add item to inventory ids
+
+
+            LoadConfigFromFile("decrypted.txt", new Regex(@"^[\$&_].{1,}:.{1,}$"));
