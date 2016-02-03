@@ -1,6 +1,10 @@
 Full Changelog
 ==============
 
+0.0.0.7a
+--------
+- Load config from config.cfg file
+
 0.0.0.6a
 --------
 - Major refactoring, now using Dictionary<key, value> for all lists
