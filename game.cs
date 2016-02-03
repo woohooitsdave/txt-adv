@@ -1,7 +1,7 @@
 // Compiler commands
 
 //& RunInOwnWindow
-//$ utils.cs
+//$ GameUtils.cs
 
 
 /*
@@ -34,7 +34,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
-using MyUtils;
+using GameUtils;
 
 
 namespace TextAdventureGame
@@ -44,11 +44,10 @@ namespace TextAdventureGame
     {
         
         public static Game G = new Game();
-        public static World W = new World("game.xml");
-        public static Display D = new Display();                
-        public static Player P = new Player();
-        public static bool roomdesc = false;
-        
+        private static World W = new World("game.xml");
+        private static Display D = new Display();                
+        private static Player P = new Player();
+        private static bool roomdesc = false;
         private static string lastinput = "";
 
         public enum Inputs { Exit, DoExit, Yes, No, Null, Help, Invalid,
@@ -61,7 +60,7 @@ namespace TextAdventureGame
         
         private static void Main(string[] args)
         {
-            G.SetVersion("0.0.0.3a");
+            G.SetVersion("0.0.0.6a");
             G.XMLSetup("game.xml");
             D.Configure(G.GetTitle());
 
@@ -83,28 +82,36 @@ namespace TextAdventureGame
         }
         
         private static Inputs GameLoop(){
-            D.feedback = "";
+            string Feedback = "";
             
-            if(Array.BinarySearch(directions, lastcmd) >= 0){
-                try{P.MoveTo(W.GetDoorFrom(P.Locate(), lastcmd).toID); roomdesc = false;
-                } catch (Exception) { D.feedback = G.String("$noentry"); }                
+            //if(Array.BinarySearch(directions, lastcmd) >= 0){
+            //    try{P.MoveTo(W.GetDoorFrom(P.Locate(), lastcmd).toID); roomdesc = false;
+            //    } catch (Exception) { Feedback = G.String("$noentry"); }                
+            //}
+            foreach(Inputs inp in directions){
+                if(lastcmd == inp) try {P.MoveTo(W.GetDoorFrom(P.Locate(), lastcmd).toID); roomdesc = false;
+                } catch (Exception) { Feedback = G.String("$noentry"); } 
             }
             
-            if(lastcmd == Inputs.Take) D.feedback = PickupItem(lastinput);
-            if(lastcmd == Inputs.Drop) D.feedback = DropItem(lastinput);
-            if(lastcmd == Inputs.Time) D.feedback = P.CheckTime();
+            if(lastcmd == Inputs.Take) Feedback = PickupItem(lastinput);
+            if(lastcmd == Inputs.Drop) Feedback = DropItem(lastinput);
+            if(lastcmd == Inputs.Time) Feedback = P.CheckTime();
             if(lastcmd == Inputs.InvToggle) D.showinv = !D.showinv;
-            if(lastcmd == Inputs.Examine) D.feedback = Examine(lastinput);
+            if(lastcmd == Inputs.Examine) Feedback = Examine(lastinput);
             if(lastcmd == Inputs.Help) D.WriteHelp();
-            if(lastcmd == Inputs.Invalid) D.feedback = G.String("$invalid") + lastinput;
-            if(lastcmd == Inputs.Exit) D.feedback = G.String("$exitq");
+            if(lastcmd == Inputs.Invalid) Feedback = G.String("$invalid") + lastinput;
+            if(lastcmd == Inputs.Exit) Feedback = G.String("$exitq");
             
             D.Wipe();
-            D.DrawGUI(P);
-            D.ShortCellDesc((Cell)W.Get(typeof(Cell),P.Locate()));
+            DrawGUI();
+            D.WriteLeft(((Cell)W.Get(typeof(Cell),P.Locate())).name);
             D.Inc();
-            if(!roomdesc) D.feedback = Examine("examine room");
-            D.ShowFeedback(lastinput);
+            if(!roomdesc) Feedback = Examine("examine room");
+            if(Feedback != ""){
+                if(lastinput != ""){ D.WriteLeft("-> "+ lastinput); D.Inc(); }
+                D.WriteLeft(Feedback);
+                D.Inc();
+            }
                                    
             lastinput = D.UserPrompt();
             if((lastcmd == Inputs.Exit)&&(RequestCommand(lastinput) == Inputs.Yes)) return Inputs.DoExit;
@@ -171,12 +178,12 @@ namespace TextAdventureGame
             switch(inpArr[0]){
                 case "north": return Inputs.North;
                 case "south": return Inputs.South;
-                case "nw": return Inputs.NorthW;
-                case "sw": return Inputs.SouthW;
-                case "ne": return Inputs.NorthE;
-                case "se": return Inputs.SouthE;
-                case "up": return Inputs.Up;
-                case "down": return Inputs.Down;
+                //case "nw": return Inputs.NorthW;
+                //case "sw": return Inputs.SouthW;
+                //case "ne": return Inputs.NorthE;
+                //case "se": return Inputs.SouthE;
+                //case "up": return Inputs.Up;
+                //case "down": return Inputs.Down;
                 case "east": return Inputs.East;
                 case "west": return Inputs.West;
                 case "exit": return Inputs.Exit;
@@ -221,7 +228,34 @@ namespace TextAdventureGame
                 D.WriteCentral(s);
             }
         }
-    
+        public static void DrawGUI()
+        {
+            int width = Console.WindowWidth;
+            D.ResetCursor();
+            D.WriteCentral("** " + D.title + " **");
+            D.Inc();
+            D.FullLine('-');
+            D.Inc();
+            D.WriteLeftRightSplit("Player: " + P.GetName(), "Score: " + P.GetScore());
+            if(D.showinv) {
+                D.FullLine('-');
+                D.Inc();
+                if(P.backpack.Size() == 0){ D.WriteLeft(MainGame.G.String("$packempty")); }
+                else{
+                    D.WriteLeft(MainGame.G.String("$packcontents"));
+                    string[] items = P.backpack.List();
+                    for(int i = 0; i < items.Length; i++) D.WriteLeft(" - " + items[i]);
+                }
+                D.Inc();
+                if(P.clothing.Size() > 0){
+                    D.WriteLeft(MainGame.G.String("$wearing"));
+                    string[] items = P.clothing.List();
+                    for(int i = 0; i < items.Length; i++) D.WriteLeft(" - " + items[i]);
+                } 
+            };
+            D.FullLine('-');
+            D.Inc(); 
+        }
     }
     
 public class World
@@ -609,129 +643,5 @@ public class Inventory
         
     }
 }
-
-public class Display
-{
-    public string feedback = "";
-    public bool showinv = true;
-    private int cursorstart = 1;
-    private string title;
-    
-    public Display(){   }
-    
-    public void Configure(string t)
-    {
-            title = Console.Title = t;
-            Console.SetWindowSize(100, 50);
-            Console.ResetColor();
-            Wipe();
-    }
-    
-    public void ResetCursor(){ Console.CursorTop=cursorstart; Console.CursorLeft=0; }
-    public void Wipe(){Console.Clear(); ResetCursor();} 
-    
-    public void WriteHelp(){
-        Console.WriteLine("Available commands:          [alternative]");
-        Console.WriteLine("  exit [quit] - quit game");
-        Console.WriteLine("  gui - toggle size of GUI");
-        Console.WriteLine("  inv - show/hide inventory");
-        Console.WriteLine("  help - show this list");
-        Console.WriteLine("  examine xx [ex xx] - examine something");
-    }
-    
-    public void WriteLeft(string msg)
-    {
-        try{
-            Console.CursorLeft = 0;
-            Console.WriteLine(msg);
-        }
-        catch(System.Exception){Console.WriteLine(msg);} 
-    }
-    
-    public void WriteCentralLeft(string msg, int margin)
-    {
-        try{
-            Console.CursorLeft = margin;
-            Console.WriteLine(msg);
-            Console.CursorLeft = 0;
-        }
-        catch(System.Exception){Console.WriteLine(msg);}    
-    }
-    
-    public void WriteLeftRightSplit(string l, string r)
-    {
-        string s = "";
-        for (int i = 1; i <= (Console.WindowWidth-l.Length-r.Length); i++) s += " ";
-        s = l + s + r;
-        Console.WriteLine(s);
-    }
-    
-    public void WriteCentral(string msg)
-    {
-        try{
-            Console.CursorLeft = (Console.WindowWidth/2)-(msg.Length/2);
-            Console.WriteLine(msg);
-            Console.CursorLeft = 0;
-        }
-        catch(System.Exception){Console.WriteLine(msg);}              
-    }
-    
-    public void FullLine(char c)
-    {
-        for (int i = 1; i <= Console.WindowWidth; i++) { Console.Write(c); }
-        Console.CursorLeft = 0;
-    }
-    
-    public void Inc() { Console.CursorTop++; }
-    public void Inc(int i) { Console.CursorTop+=i; }
-    
-    public string UserPrompt() {
-        Console.Write("?> ");
-        return Console.ReadLine();
-    }
-    
-    public void DrawGUI(Player P)
-    {
-        int width = Console.WindowWidth;
-        ResetCursor();
-        WriteCentral("** " + title + " **");
-        Inc();
-        FullLine('-');
-        Inc();
-        WriteLeftRightSplit("Player: " + P.GetName(), "Score: " + P.GetScore());
-        if(showinv) {
-            FullLine('-');
-            Inc();
-            if(P.backpack.Size() == 0){ WriteLeft(MainGame.G.String("$packempty")); }
-            else{
-                WriteLeft(MainGame.G.String("$packcontents"));
-                string[] items = P.backpack.List();
-                for(int i = 0; i < items.Length; i++) WriteLeft(" - " + items[i]);
-            }
-            Inc();
-            if(P.clothing.Size() > 0){
-                WriteLeft(MainGame.G.String("$wearing"));
-                string[] items = P.clothing.List();
-                for(int i = 0; i < items.Length; i++) WriteLeft(" - " + items[i]);
-            } 
-        };
-        FullLine('-');
-        Inc(); 
-    }
-    
-    public void ShortCellDesc(Cell c){
-        WriteLeft(c.name);        
-    }
-    
-    public void ShowFeedback(string lastinput){
-        if(feedback != ""){
-            if(lastinput != ""){ WriteLeft("-> "+ lastinput); Inc(); }
-            WriteLeft(feedback);
-            Inc();
-        }
-    }
-}
-
-
-    
+   
 }
