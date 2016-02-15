@@ -1,3 +1,5 @@
+//FEATURES
+Inventory Screen (drawbox, central, menu list)
 Items - a/an/the
 Load synonyms for commands from file
 Wear/Equip item
@@ -11,12 +13,13 @@ Weather system
 Abilities/unlockable commands
 Files/Books
 Achievements/Statistics
-Re-join inputs after 1st command found (2, 3, 4 etc become index 2) to allow multi word descriptions (blue book, etc)
 
-///Refactoring
+//CODE IMPROVEMENT, OVERHAUL
+Re-join inputs after 1st command found (2, 3, 4 etc become index 2) to allow multi word descriptions (blue book, etc)
 Split into cs files
 Custom Exceptions
 Catch failed add item to inventory ids
+Display class to fully use Try/Catch so any console will work
 
 
             LoadConfigFromFile("decrypted.txt", new Regex(@"^[\$&_].{1,}:.{1,}$"));
