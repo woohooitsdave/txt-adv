@@ -5,6 +5,7 @@ Full Changelog
 --------
 - Load config from config.cfg file
 - Load language from lang.dat file
+- New line char used for smoother look
 
 0.0.0.6a
 --------
