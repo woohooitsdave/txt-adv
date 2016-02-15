@@ -4,6 +4,7 @@ Full Changelog
 0.0.0.7a
 --------
 - Load config from config.cfg file
+- Load language from lang.dat file
 
 0.0.0.6a
 --------
