@@ -15,7 +15,6 @@ Re-join inputs after 1st command found (2, 3, 4 etc become index 2) to allow mul
 
 ///Refactoring
 Split into cs files
-Words from game into lang file
 Custom Exceptions
 Catch failed add item to inventory ids
 
